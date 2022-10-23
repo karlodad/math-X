@@ -18,12 +18,14 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Public()
+  @HttpCode(HttpStatus.OK)
   @Post('login')
   login(@Body() body: PartUser) {
     return this.userService.login(body);
   }
 
   @Public()
+  @HttpCode(HttpStatus.OK)
   @Post('signup')
   signUP(@Body() body: PartUser) {
     return this.userService.signUp(body);
