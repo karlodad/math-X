@@ -1,6 +1,10 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class PartUser {
-    login: string;
-    password: string;
-    hash: string;
-  }
-  
+  @ApiProperty()
+  login: string;
+  @ApiProperty()
+  password: string;
+  @ApiProperty({ nullable: true, required: false })
+  hash: string;
+}
