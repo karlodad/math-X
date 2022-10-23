@@ -1,1 +1,29 @@
-<p>login works!</p>
+<nz-spin [nzSpinning]="isLoading$ | async">
+  <div class="header">
+    <h2>Авторизация</h2>
+    <h3><a [routerLink]="['/auth/registration']">Регистрация</a></h3>
+  </div>
+
+  <form [formGroup]="formLogin" nz-form (ngSubmit)="submitForm()">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6" nzFor="login" nzRequired>Логин</nz-form-label>
+      <nz-form-control [nzSpan]="14" nzErrorTip="Поле должно быть заполнено">
+        <nz-input-group nzPrefixIcon="user">
+          <input nz-input name="login" type="text" id="login" formControlName="login" />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6" nzFor="password" nzRequired>Пароль</nz-form-label>
+      <nz-form-control [nzSpan]="14" nzErrorTip="Поле должно быть заполнено">
+        <nz-input-group nzPrefixIcon="lock">
+          <input nz-input name="password" type="password" id="password" formControlName="password" />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-alert *ngIf="errorMessage$ | async as message" nzType="error" [nzMessage]="message" nzShowIcon></nz-alert>
+    <div class="actions">
+      <button nz-button nzType="primary" nzBlock [disabled]="formLogin.invalid">Войти</button>
+    </div>
+  </form>
+</nz-spin>
