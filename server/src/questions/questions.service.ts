@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Question } from './DTO/question.schema';
+import { answersStorage } from './storage/answerstorage';
 
 @Injectable()
 export class QuestionsService {
@@ -31,9 +32,10 @@ export class QuestionsService {
       range: 5,
     },
   };
-  
-  createQuestions(count: number, difficultlvl: number) {
+
+  createQuestions(count: number, difficultlvl: number, userID: string) {
     const masQuestions: Question[] = [];
+    const answers: (number | string)[] = [];
     const max = this.difficult[difficultlvl].max;
     const min = this.difficult[difficultlvl].min;
 
@@ -46,7 +48,6 @@ export class QuestionsService {
         b: '',
         c: '',
         symbol: '',
-        correctAnswer: 0,
         answers: [],
       };
 
@@ -57,96 +58,65 @@ export class QuestionsService {
         case 0: //plus
           question.symbol = '+';
           question.c = question.a + question.b;
-
-          if (chance < 0.5) {
-            question.correctAnswer = question.a + question.b;
-            question.c = '?';
-          } else if (chance < 0.6) {
-            question.correctAnswer = question.a;
-            question.a = '?';
-          } else if (chance < 0.7) {
-            question.correctAnswer = question.b;
-            question.b = '?';
-          } else {
-            question.symbol = '?';
-            question.correctAnswer = '+';
-          }
-          question.answers = this.createWrongAnswer(
-            question.correctAnswer,
-            difficultlvl,
-          );
+          this.chance(chance, question, '+', answers);
           break;
         case 1: //minus
           question.symbol = '-';
           question.c = question.a - question.b;
 
-          if (chance < 0.5) {
-            question.correctAnswer = question.a - question.b;
-            question.c = '?';
-          } else if (chance < 0.6) {
-            question.correctAnswer = question.a;
-            question.a = '?';
-          } else if (chance < 0.7) {
-            question.correctAnswer = question.b;
-            question.b = '?';
-          } else {
-            question.symbol = '?';
-            question.correctAnswer = '-';
-          }
-          question.answers = this.createWrongAnswer(
-            question.correctAnswer,
-            difficultlvl,
-          );
+          this.chance(chance, question, '-', answers);
           break;
         case 2: //multi
           question.symbol = '*';
           question.c = question.a * question.b;
 
-          if (chance < 0.5) {
-            question.correctAnswer = question.a * question.b;
-            question.c = '?';
-          } else if (chance < 0.6) {
-            question.correctAnswer = question.a;
-            question.a = '?';
-          } else if (chance < 0.7) {
-            question.correctAnswer = question.b;
-            question.b = '?';
-          } else {
-            question.symbol = '?';
-            question.correctAnswer = '*';
-          }
-          question.answers = this.createWrongAnswer(
-            question.correctAnswer,
-            difficultlvl,
-          );
+          this.chance(chance, question, '*', answers);
           break;
         case 3: //division
           question.symbol = '/';
           question.a = question.a * question.b;
           question.c = question.a / question.b;
 
-          if (chance < 0.5) {
-            question.correctAnswer = question.a / question.b;
-            question.c = '?';
-          } else if (chance < 0.6) {
-            question.correctAnswer = question.a;
-            question.a = '?';
-          } else if (chance < 0.7) {
-            question.correctAnswer = question.b;
-            question.b = '?';
-          } else {
-            question.symbol = '?';
-            question.correctAnswer = '/';
-          }
-          question.answers = this.createWrongAnswer(
-            question.correctAnswer,
-            difficultlvl,
-          );
+          this.chance(chance, question, '/', answers);
           break;
       }
+      question.answers = this.createWrongAnswer(answers.at(-1), difficultlvl);
       masQuestions.push(question);
     }
+    if (answersStorage.has(userID)) {
+      const userAnsStor = answersStorage.get(userID);
+      const newArr = userAnsStor.answers.concat(answers);
+      answersStorage.set(userID, {
+        answers: newArr,
+        updateDate: new Date().getTime(),
+      });
+    } else
+      answersStorage.set(userID, { answers, updateDate: new Date().getTime() });
     return masQuestions;
+  }
+
+  chance(
+    chance: number,
+    question: Question,
+    operator: string,
+    answers: (number | string)[],
+  ) {
+    if (chance < 0.5) {
+      if (operator === '+') answers.push(+question.a + +question.b);
+      if (operator === '-') answers.push(+question.a - +question.b);
+      if (operator === '*') answers.push(+question.a * +question.b);
+      if (operator === '/') answers.push(+question.a / +question.b);
+      question.c = '?';
+    } else if (chance < 0.6) {
+      answers.push(question.a);
+      question.a = '?';
+    } else if (chance < 0.7) {
+      answers.push(question.b);
+      question.b = '?';
+    } else {
+      question.symbol = '?';
+      answers.push(operator);
+    }
   }
 
   getRndInteger(min: number, max: number): number {
@@ -184,5 +154,10 @@ export class QuestionsService {
     }
 
     return array;
+  }
+
+  getAnswers(id: string) {
+    const ans = answersStorage.get(id);
+    return ans;
   }
 }
