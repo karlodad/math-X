@@ -3,6 +3,8 @@ import { Question } from './DTO/question.schema';
 
 @Injectable()
 export class QuestionsService {
+  operators = ['+', '-', '*', '/'];
+
   difficult = {
     1: {
       max: 10,
@@ -29,6 +31,7 @@ export class QuestionsService {
       range: 5,
     },
   };
+  
   createQuestions(count: number, difficultlvl: number) {
     const masQuestions: Question[] = [];
     const max = this.difficult[difficultlvl].max;
@@ -36,9 +39,12 @@ export class QuestionsService {
 
     for (let i = 0; i < count; i++) {
       const symbol = this.getRndInteger(0, 3);
+      const chance = Math.random();
+
       let question: Question = {
-        a: 0,
-        b: 0,
+        a: '',
+        b: '',
+        c: '',
         symbol: '',
         correctAnswer: 0,
         answers: [],
@@ -50,7 +56,21 @@ export class QuestionsService {
       switch (symbol) {
         case 0: //plus
           question.symbol = '+';
-          question.correctAnswer = question.a + question.b;
+          question.c = question.a + question.b;
+
+          if (chance < 0.5) {
+            question.correctAnswer = question.a + question.b;
+            question.c = '?';
+          } else if (chance < 0.6) {
+            question.correctAnswer = question.a;
+            question.a = '?';
+          } else if (chance < 0.7) {
+            question.correctAnswer = question.b;
+            question.b = '?';
+          } else {
+            question.symbol = '?';
+            question.correctAnswer = '+';
+          }
           question.answers = this.createWrongAnswer(
             question.correctAnswer,
             difficultlvl,
@@ -58,7 +78,21 @@ export class QuestionsService {
           break;
         case 1: //minus
           question.symbol = '-';
-          question.correctAnswer = question.a - question.b;
+          question.c = question.a - question.b;
+
+          if (chance < 0.5) {
+            question.correctAnswer = question.a - question.b;
+            question.c = '?';
+          } else if (chance < 0.6) {
+            question.correctAnswer = question.a;
+            question.a = '?';
+          } else if (chance < 0.7) {
+            question.correctAnswer = question.b;
+            question.b = '?';
+          } else {
+            question.symbol = '?';
+            question.correctAnswer = '-';
+          }
           question.answers = this.createWrongAnswer(
             question.correctAnswer,
             difficultlvl,
@@ -66,16 +100,44 @@ export class QuestionsService {
           break;
         case 2: //multi
           question.symbol = '*';
-          question.correctAnswer = question.a * question.b;
+          question.c = question.a * question.b;
+
+          if (chance < 0.5) {
+            question.correctAnswer = question.a * question.b;
+            question.c = '?';
+          } else if (chance < 0.6) {
+            question.correctAnswer = question.a;
+            question.a = '?';
+          } else if (chance < 0.7) {
+            question.correctAnswer = question.b;
+            question.b = '?';
+          } else {
+            question.symbol = '?';
+            question.correctAnswer = '*';
+          }
           question.answers = this.createWrongAnswer(
             question.correctAnswer,
             difficultlvl,
           );
           break;
         case 3: //division
-          question.a = question.a * question.b;
           question.symbol = '/';
-          question.correctAnswer = question.a / question.b;
+          question.a = question.a * question.b;
+          question.c = question.a / question.b;
+
+          if (chance < 0.5) {
+            question.correctAnswer = question.a / question.b;
+            question.c = '?';
+          } else if (chance < 0.6) {
+            question.correctAnswer = question.a;
+            question.a = '?';
+          } else if (chance < 0.7) {
+            question.correctAnswer = question.b;
+            question.b = '?';
+          } else {
+            question.symbol = '?';
+            question.correctAnswer = '/';
+          }
           question.answers = this.createWrongAnswer(
             question.correctAnswer,
             difficultlvl,
@@ -91,7 +153,8 @@ export class QuestionsService {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  createWrongAnswer(answer: number, countAnsw: number) {
+  createWrongAnswer(answer: number | string, countAnsw: number) {
+    if (typeof answer === 'string') return this.shuffle(this.operators);
     const maxAnswer = this.difficult[countAnsw].maxAnswer;
     const range = this.difficult[countAnsw].range;
     const answers: number[] = [];
@@ -106,7 +169,7 @@ export class QuestionsService {
     return this.shuffle(answers);
   }
 
-  shuffle(array: number[]) {
+  shuffle(array: number[] | string[]) {
     let currentIndex = array.length;
     let randomIndex: number;
 

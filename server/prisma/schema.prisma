@@ -15,4 +15,21 @@ model User {
   login    String @unique
   password String @map("password_hash")
   hash     String?
+  tests    Score[]
+}
+
+model Score {
+  id       Int  @id @default(autoincrement())
+  user     User @relation(fields: [userId], references: [id])
+  userId   String @db.Uuid
+  points   Int? @default(0)
+  combo    Int? @default(0)
+  game     Game @relation(fields: [gameId], references: [id])
+  gameId   Int
+}
+
+model Game {
+  id       Int      @id @default(autoincrement())
+  name     String
+  tests    Score[]
 }

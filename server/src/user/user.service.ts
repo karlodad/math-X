@@ -89,7 +89,9 @@ export class UserService {
         },
       ),
     ]);
-    const datalife = new Date(this.JwtServise.decode(accessToken)['exp']*1000).toJSON();
+    const datalife = new Date(
+      this.JwtServise.decode(accessToken)['exp'] * 1000,
+    ).toJSON();
     return {
       refreshToken,
       accessToken,

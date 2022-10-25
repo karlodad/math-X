@@ -5,9 +5,10 @@ import { AppService } from './app.service';
 import { AtGuard } from './common/guards/AtGuard';
 import { UserModule } from './user/user.module';
 import { QuestionsModule } from './questions/questions.module';
+import { GameModule } from './game/game.module';
 
 @Module({
-  imports: [UserModule, QuestionsModule],
+  imports: [UserModule, QuestionsModule, GameModule],
   controllers: [AppController],
   providers: [
     AppService,

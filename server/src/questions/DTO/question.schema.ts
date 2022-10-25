@@ -2,13 +2,15 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class Question {
   @ApiProperty()
-  a: number;
+  a: number | string;
   @ApiProperty()
-  b: number;
+  b: number | string;
+  @ApiProperty()
+  c: number | string;
   @ApiProperty()
   symbol: string;
   @ApiProperty()
-  correctAnswer: number;
+  correctAnswer: number | string;
   @ApiProperty({ type: 'number[]' })
-  answers: number[];
+  answers: number[] | string[];
 }
