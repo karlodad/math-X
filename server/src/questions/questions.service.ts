@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import { PrismaService } from 'src/prismaClient/prisma.service';
+import { AnswersCheck } from './DTO/answerCheck';
 import { Answers } from './DTO/answers.schema';
 import { Question } from './DTO/question.schema';
 
@@ -175,6 +176,36 @@ export class QuestionsService {
       answers.map((answer) => this.prisma.answers.create({ data: answer })),
     );
     return data.map((e) => e.id);
+  }
+
+  async checkAnswer(body: AnswersCheck) {
+    const answers = await this.prisma.answers.findMany({
+      where: { id: { in: body.id } },
+    });
+
+    const score = await this.prisma.score.findUnique({
+      where: { id: body.gameId },
+    });
+
+
+    for (let i = 0; i < body.answer.length; i++) {
+      if (body.answer[i] === answers[i].correctAnswer) {
+        score.points += score.combo;
+        score.combo++;
+      } else {
+        score.combo = 1;
+      }
+    }
+    await this.prisma.answers.updateMany({
+      where: { id: { in: body.id } },
+      data: { isAnswer: true },
+    });
+    await this.prisma.score.update({
+      where: { id: body.gameId },
+      data: { combo: score.combo, points: score.points },
+    });
+
+    return score.points;
   }
 
   @Cron('* 10 * * * *')
