@@ -15,4 +15,11 @@ export class GameService {
     const game = this.prisma.score.findUnique({ where: { id } });
     return game;
   }
+
+  async getGame(gameType: number, userId: string) {
+    const games = await this.prisma.score.findMany({
+      where: { userId: userId, gameId: gameType },
+    });
+    return games;
+  }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { GameService } from './game.service';
 
@@ -19,5 +19,10 @@ export class GameController {
   @Post('resumeGame:id')
   resume(@Param() id: number) {
     return this.gameSer.resumeGame(id);
+  }
+
+  @Get()
+  getGames(@Body() body: { gameid: number }, @Req() req: Request) {
+    return this.gameSer.getGame(body.gameid, req.user['id']);
   }
 }
