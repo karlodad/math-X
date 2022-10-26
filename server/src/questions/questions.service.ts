@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { Cron, SchedulerRegistry } from '@nestjs/schedule';
+import { PrismaService } from 'src/prismaClient/prisma.service';
+import { Answers } from './DTO/answers.schema';
 import { Question } from './DTO/question.schema';
-import { answersStorage } from './storage/answerstorage';
 
 @Injectable()
 export class QuestionsService {
+  constructor(private readonly prisma: PrismaService) {}
   operators = ['+', '-', '*', '/'];
 
   difficult = {
@@ -33,9 +36,9 @@ export class QuestionsService {
     },
   };
 
-  createQuestions(count: number, difficultlvl: number, userID: string) {
+  async createQuestions(count: number, difficultlvl: number, userID: string) {
     const masQuestions: Question[] = [];
-    const answers: (number | string)[] = [];
+    const answers: Answers[] = [];
     const max = this.difficult[difficultlvl].max;
     const min = this.difficult[difficultlvl].min;
 
@@ -51,6 +54,12 @@ export class QuestionsService {
         answers: [],
       };
 
+      let answer: Answers = {
+        userId: userID,
+        correctAnswer: '',
+        gameId: 1,
+      };
+
       question.a = this.getRndInteger(min, max);
       question.b = this.getRndInteger(min, max);
 
@@ -58,64 +67,62 @@ export class QuestionsService {
         case 0: //plus
           question.symbol = '+';
           question.c = question.a + question.b;
-          this.chance(chance, question, '+', answers);
+          this.chance(chance, question, '+', answer);
           break;
         case 1: //minus
           question.symbol = '-';
           question.c = question.a - question.b;
-
-          this.chance(chance, question, '-', answers);
+          this.chance(chance, question, '-', answer);
           break;
         case 2: //multi
           question.symbol = '*';
           question.c = question.a * question.b;
-
-          this.chance(chance, question, '*', answers);
+          this.chance(chance, question, '*', answer);
           break;
         case 3: //division
           question.symbol = '/';
           question.a = question.a * question.b;
           question.c = question.a / question.b;
-
-          this.chance(chance, question, '/', answers);
+          this.chance(chance, question, '/', answer);
           break;
       }
-      question.answers = this.createWrongAnswer(answers.at(-1), difficultlvl);
+      question.answers = this.createWrongAnswer(
+        answer.correctAnswer,
+        difficultlvl,
+      );
       masQuestions.push(question);
+      answers.push(answer);
     }
-    if (answersStorage.has(userID)) {
-      const userAnsStor = answersStorage.get(userID);
-      const newArr = userAnsStor.answers.concat(answers);
-      answersStorage.set(userID, {
-        answers: newArr,
-        updateDate: new Date().getTime(),
-      });
-    } else
-      answersStorage.set(userID, { answers, updateDate: new Date().getTime() });
-    return masQuestions;
+
+    const masAnsId = await this.saveAnswer(answers);
+    return { masQuestions, masAnsId };
   }
 
   chance(
     chance: number,
     question: Question,
     operator: string,
-    answers: (number | string)[],
+    answers: Answers,
   ) {
     if (chance < 0.5) {
-      if (operator === '+') answers.push(+question.a + +question.b);
-      if (operator === '-') answers.push(+question.a - +question.b);
-      if (operator === '*') answers.push(+question.a * +question.b);
-      if (operator === '/') answers.push(+question.a / +question.b);
+      if (operator === '+')
+        answers.correctAnswer = (+question.a + +question.b).toString();
+      if (operator === '-')
+        answers.correctAnswer = (+question.a - +question.b).toString();
+      if (operator === '*')
+        answers.correctAnswer = (+question.a * +question.b).toString();
+      if (operator === '/')
+        answers.correctAnswer = (+question.a / +question.b).toString();
       question.c = '?';
     } else if (chance < 0.6) {
-      answers.push(question.a);
+      answers.correctAnswer = question.a.toString();
       question.a = '?';
     } else if (chance < 0.7) {
-      answers.push(question.b);
+      answers.correctAnswer = question.b.toString();
       question.b = '?';
     } else {
       question.symbol = '?';
-      answers.push(operator);
+      answers.correctAnswer = operator;
     }
   }
 
@@ -123,15 +130,19 @@ export class QuestionsService {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  createWrongAnswer(answer: number | string, countAnsw: number) {
-    if (typeof answer === 'string') return this.shuffle(this.operators);
+  createWrongAnswer(correctAnswer: string, countAnsw: number) {
+    if (this.operators.includes(correctAnswer))
+      return this.shuffle(this.operators);
     const maxAnswer = this.difficult[countAnsw].maxAnswer;
     const range = this.difficult[countAnsw].range;
     const answers: number[] = [];
-    answers.push(answer);
+    answers.push(+correctAnswer);
 
     while (answers.length < maxAnswer) {
-      const newAns = this.getRndInteger(answer - range, answer + range);
+      const newAns = this.getRndInteger(
+        +correctAnswer - range,
+        +correctAnswer + range,
+      );
       if (answers.includes(newAns)) continue;
       else answers.push(newAns);
     }
@@ -156,8 +167,19 @@ export class QuestionsService {
     return array;
   }
 
-  getAnswers(id: string) {
-    const ans = answersStorage.get(id);
-    return ans;
+  async saveAnswer(answers: Answers[]) {
+    // const data = await this.prisma.answers.createMany({ data: answers });
+    // console.log(data);
+
+    const data = await this.prisma.$transaction(
+      answers.map((answer) => this.prisma.answers.create({ data: answer })),
+    );
+    return data.map((e) => e.id);
+  }
+
+  @Cron('* 10 * * * *')
+  async cleanQuestions() {
+    await this.prisma.$queryRaw`DELETE FROM public."Answers"
+    WHERE "CreateDate" <  now() - interval '1 hour' or "isAnswer" = true`;
   }
 }

@@ -15,7 +15,7 @@ model User {
   login    String @unique
   password String @map("password_hash")
   hash     String?
-  tests    Score[]
+  score    Score[]
 }
 
 model Score {
@@ -31,5 +31,14 @@ model Score {
 model Game {
   id       Int      @id @default(autoincrement())
   name     String
-  tests    Score[]
+  score    Score[]
+}
+
+model Answers {
+id       String @id @default(uuid()) @db.Uuid
+userId   String
+correctAnswer String
+CreateDate DateTime @default(now())
+isAnswer   Boolean @default(false)
+gameId   Int
 }

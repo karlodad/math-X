@@ -6,9 +6,10 @@ import { AtGuard } from './common/guards/AtGuard';
 import { UserModule } from './user/user.module';
 import { QuestionsModule } from './questions/questions.module';
 import { GameModule } from './game/game.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [UserModule, QuestionsModule, GameModule],
+  imports: [UserModule, QuestionsModule, GameModule, ScheduleModule.forRoot()],
   controllers: [AppController],
   providers: [
     AppService,
