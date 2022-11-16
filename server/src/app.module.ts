@@ -8,7 +8,6 @@ import { QuestionsModule } from './questions/questions.module';
 import { GameModule } from './game/game.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventsModule } from './events/events.module';
-import { EventssModule } from './eventss/eventss.module';
 
 @Module({
   imports: [
@@ -17,7 +16,6 @@ import { EventssModule } from './eventss/eventss.module';
     GameModule,
     EventsModule,
     ScheduleModule.forRoot(),
-    EventssModule,
 
   ],
   controllers: [AppController],
