@@ -8,7 +8,7 @@ export class GameService {
 
   async createNewGame(data: NewGame) {
     const gane = await this.prisma.score.create({ data });
-    return gane.id;
+    return { id: gane.id };
   }
 
   async resumeGame(id: number) {

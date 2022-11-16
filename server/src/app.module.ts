@@ -7,9 +7,19 @@ import { UserModule } from './user/user.module';
 import { QuestionsModule } from './questions/questions.module';
 import { GameModule } from './game/game.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EventsModule } from './events/events.module';
+import { EventssModule } from './eventss/eventss.module';
 
 @Module({
-  imports: [UserModule, QuestionsModule, GameModule, ScheduleModule.forRoot()],
+  imports: [
+    UserModule,
+    QuestionsModule,
+    GameModule,
+    EventsModule,
+    ScheduleModule.forRoot(),
+    EventssModule,
+
+  ],
   controllers: [AppController],
   providers: [
     AppService,

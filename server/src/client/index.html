@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <script
+      src="https://cdn.socket.io/4.5.3/socket.io.min.js"
+      integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      this.socketOptions = {
+        transportOptions: {
+          polling: {
+            extraHeaders: {
+              Authorization:
+                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmNjhlNDIyYy04NGEyLTQwYzQtOTc0MC1lOGQ4YmZjZDY0MzciLCJsb2dpbiI6IlZhZGltIiwiaWF0IjoxNjY4NTg1MDYxLCJleHAiOjE2Njg1ODg2NjF9.4SVbGSFf7-_JWyJi-3HImTnN_VES7i6uFVX-BQ4PKAE', //'Bearer h93t4293t49jt34j9rferek...'
+            },
+          },
+        },
+      };
+      const socket = io('http://localhost:4000', this.socketOptions);
+      socket.on('connect', function () {
+        console.log('Connected');
+
+        socket.emit('events', { test: 'test' });
+        socket.emit('identity', 0, (response) =>
+          console.log('Identity:', response),
+        );
+      });
+      socket.on('events', function (data) {
+        console.log('event', data);
+      });
+      socket.on('exception', function (data) {
+        console.log('event', data);
+      });
+      socket.on('disconnect', function () {
+        console.log('Disconnected');
+      });
+    </script>
+  </head>
+
+  <body></body>
+</html>
