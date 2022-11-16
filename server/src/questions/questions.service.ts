@@ -95,7 +95,8 @@ export class QuestionsService {
       answers.push(answer);
     }
 
-    const masAnsId = await this.saveAnswer(answers);
+    // const masAnsId = await this.saveAnswer(answers);
+    const masAnsId = {};
     return { masQuestions, masAnsId };
   }
 
@@ -187,7 +188,6 @@ export class QuestionsService {
       where: { id: body.gameId },
     });
 
-
     for (let i = 0; i < body.answer.length; i++) {
       if (body.answer[i] === answers[i].correctAnswer) {
         score.points += score.combo;
@@ -208,7 +208,7 @@ export class QuestionsService {
     return score.points;
   }
 
-  @Cron('* 10 * * * *')
+  @Cron('45 * * * * *')
   async cleanQuestions() {
     await this.prisma.$queryRaw`DELETE FROM public."Answers"
     WHERE "CreateDate" <  now() - interval '1 hour' or "isAnswer" = true`;
