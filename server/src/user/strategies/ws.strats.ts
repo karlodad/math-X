@@ -19,9 +19,11 @@ export class WsGuard implements CanActivate {
     const bearerToken =
       context.args[0].handshake.headers.authorization.split(' ')[1];
     try {
-      await this.JwtServise.verify(bearerToken, {
+      const decode = await this.JwtServise.verify(bearerToken, {
         secret: process.env.ATSecret,
       });
+      const req = context.switchToHttp().getRequest();
+      req.UserId = decode.sub;
       return true;
     } catch (ex) {
       return false;

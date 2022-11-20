@@ -5,13 +5,17 @@
       integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi"
       crossorigin="anonymous"
     ></script>
+    <body>
+      <input id="ans" type="text" />
+      <button id="btn">Click</button>
+    </body>
     <script>
       this.socketOptions = {
         transportOptions: {
           polling: {
             extraHeaders: {
               Authorization:
-                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmNjhlNDIyYy04NGEyLTQwYzQtOTc0MC1lOGQ4YmZjZDY0MzciLCJsb2dpbiI6IlZhZGltIiwiaWF0IjoxNjY4NjI3OTU1LCJleHAiOjE2Njg2MzE1NTV9.2h-stldFuoA_e2tRQsFuxEFvviMU6PpwxFXFiApcVa4', //'Bearer h93t4293t49jt34j9rferek...'
+                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmNjhlNDIyYy04NGEyLTQwYzQtOTc0MC1lOGQ4YmZjZDY0MzciLCJsb2dpbiI6IlZhZGltIiwiaWF0IjoxNjY4OTU1MjM4LCJleHAiOjE2Njg5NTg4Mzh9.cTzKdED_Sv_wfobbX3rtnjTPb7E_XOWwrUKimPTe-g8', //'Bearer h93t4293t49jt34j9rferek...'
             },
           },
         },
@@ -22,8 +26,13 @@
         console.log('Connected');
         socket.emit('getQuestionsInf', { count: 10, difficultLvl: 1 });
       });
-
-      socket.on('postQuestionsInf', function (data) {
+      socket.on('checkAns', (data) => {
+        console.log(data);
+      });
+      socket.on('getGame', (data) => {
+        console.log(data);
+      });
+      socket.on('getQuestionsInf', function (data) {
         console.log(data);
       });
       socket.on('exception', function (data) {
@@ -31,6 +40,16 @@
       });
       socket.on('disconnect', function () {
         console.log('Disconnected');
+      });
+      socket.emit('getGame', { gameid: 1 });
+      document.getElementById('btn').addEventListener('click', () => {
+        socket.emit('checkAns', {
+          a: 10,
+          b: 20,
+          c: '?',
+          symbol: '+',
+          answer: 30,
+        });
       });
     </script>
   </head>
