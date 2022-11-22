@@ -52,14 +52,13 @@ export class EventsGateway {
     this.server.emit('checkAns', ans);
   }
 
-  @UseGuards(WsGuard)
+  // @UseGuards(WsGuard)
   @SubscribeMessage('getQuestionsInf')
   async identity(@MessageBody() data: getQuestions, @Req() req: Request) {
     console.log(req['UserId']);
     const questions = await this.quest.createQuestions(
       data.count,
-      data.difficultLvl,
-      '1',
+      data.difficultLvl
     );
 
     this.server.emit('getQuestionsInf', questions);

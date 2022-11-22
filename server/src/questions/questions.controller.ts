@@ -16,7 +16,7 @@ export class QuestionsController {
     return this.Qust.createQuestions(
       body.count,
       body.difficultLvl,
-      req.user['id'],
+      // req.user['id'],
     );
   }
 

@@ -37,9 +37,9 @@ export class QuestionsService {
     },
   };
 
-  async createQuestions(count: number, difficultlvl: number, userID: string) {
+  async createQuestions(count: number, difficultlvl: number) {
     const masQuestions: Question[] = [];
-    const answers: Answers[] = [];
+    // const answers: Answers[] = [];
     const max = this.difficult[difficultlvl].max;
     const min = this.difficult[difficultlvl].min;
 
@@ -55,76 +55,67 @@ export class QuestionsService {
         answers: [],
       };
 
-      let answer: Answers = {
-        userId: userID,
-        correctAnswer: '',
-        gameId: 1,
-      };
+      // let answer: Answers = {
+      //   userId: userID,
+      //   correctAnswer: '',
+      //   gameId: 1,
+      // };
 
       question.a = this.getRndInteger(min, max);
       question.b = this.getRndInteger(min, max);
-
+      let corrAns;
       switch (symbol) {
         case 0: //plus
           question.symbol = '+';
           question.c = question.a + question.b;
-          this.chance(chance, question, '+', answer);
+          corrAns = this.chance(chance, question, '+');
           break;
         case 1: //minus
           question.symbol = '-';
           question.c = question.a - question.b;
-          this.chance(chance, question, '-', answer);
+          corrAns = this.chance(chance, question, '-');
           break;
         case 2: //multi
           question.symbol = '*';
           question.c = question.a * question.b;
-          this.chance(chance, question, '*', answer);
+          corrAns = this.chance(chance, question, '*');
           break;
         case 3: //division
           question.symbol = '/';
           question.a = question.a * question.b;
           question.c = question.a / question.b;
-          this.chance(chance, question, '/', answer);
+          corrAns = this.chance(chance, question, '/');
           break;
       }
-      question.answers = this.createWrongAnswer(
-        answer.correctAnswer,
-        difficultlvl,
-      );
+      question.answers = this.createWrongAnswer(corrAns, difficultlvl);
       masQuestions.push(question);
-      answers.push(answer);
+      // answers.push(answer);
     }
 
     // const masAnsId = await this.saveAnswer(answers);
-    const masAnsId = {};
-    return { masQuestions, masAnsId };
+    return masQuestions;
   }
 
-  chance(
-    chance: number,
-    question: Question,
-    operator: string,
-    answers: Answers,
-  ) {
+  chance(chance: number, question: Question, operator: string) {
     if (chance < 0.5) {
-      if (operator === '+')
-        answers.correctAnswer = (+question.a + +question.b).toString();
-      if (operator === '-')
-        answers.correctAnswer = (+question.a - +question.b).toString();
-      if (operator === '*')
-        answers.correctAnswer = (+question.a * +question.b).toString();
-      if (operator === '/')
-        answers.correctAnswer = (+question.a / +question.b).toString();
+      let ans;
+      if (operator === '+') ans = (+question.a + +question.b).toString();
+      if (operator === '-') ans = (+question.a - +question.b).toString();
+      if (operator === '*') ans = (+question.a * +question.b).toString();
+      if (operator === '/') ans = (+question.a / +question.b).toString();
       question.c = '?';
+      return ans;
     } else if (chance < 0.6) {
-      answers.correctAnswer = question.a.toString();
+      const ans = question.a.toString();
       question.a = '?';
+      return ans;
     } else if (chance < 0.7) {
-      answers.correctAnswer = question.b.toString();
+      const ans = question.b.toString();
       question.b = '?';
+      return ans;
     } else {
       question.symbol = '?';
-      answers.correctAnswer = operator;
+      return operator;
     }
   }
 
