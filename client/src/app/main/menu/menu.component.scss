@@ -1,0 +1,10 @@
+.buttons {
+  .button {
+    display: flex;
+    flex-wrap: wrap;
+    & > * {
+      flex: 1;
+      margin: 2px;
+    }
+  }
+}

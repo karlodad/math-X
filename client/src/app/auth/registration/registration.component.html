@@ -23,7 +23,10 @@
     </nz-form-item>
     <nz-alert *ngIf="errorMessage$ | async as message" nzType="error" [nzMessage]="message" nzShowIcon></nz-alert>
     <div class="actions">
-      <button nz-button nzType="primary" nzBlock [disabled]="formRegistration.invalid">Войти</button>
+      <button nz-button nzType="primary" nzBlock [disabled]="formRegistration.invalid">
+        <i nz-icon nzType="login" nzTheme="outline"></i>
+        <span>Регистрация и авторизация</span>
+      </button>
     </div>
   </form>
 </nz-spin>

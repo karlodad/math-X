@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { firstValueFrom, interval, Subscriber, Subscription } from 'rxjs';
+import { firstValueFrom, interval, Subscription } from 'rxjs';
 import { User } from '../auth/models/user.model';
 
 export type ReturnUserTokens = { refreshToken: string; accessToken: string; datalife: string };

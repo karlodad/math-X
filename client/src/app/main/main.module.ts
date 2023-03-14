@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import MainComponent from './main.component';
 import MenuComponent from './menu/menu.component';
-import { NzButtonModule } from 'ng-zorro-antd/button';
 
 const routes: Routes = [
   {
@@ -36,6 +37,6 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [MainComponent, MenuComponent],
-  imports: [CommonModule, NzButtonModule, RouterModule.forChild(routes)],
+  imports: [CommonModule, NzIconModule, NzButtonModule, RouterModule.forChild(routes)],
 })
 export class MainModule {}
