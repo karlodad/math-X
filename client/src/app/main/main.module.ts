@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
-import MainComponent from './main.component';
-import MenuComponent from './menu/menu.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import MainComponent from './main.component';
+import MenuComponent from './menu/menu.component';
 
 const routes: Routes = [
   {

@@ -1,12 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Observable, Subject, take, takeUntil, timer } from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
-export class SocketService extends Socket {
+@Injectable()
+export class SocketService extends Socket implements OnDestroy {
   readonly TIMEOUT_SOCKET = 10000;
   constructor() {
     super({ url: 'http://localhost:4000', options: {} });
+  }
+
+  ngOnDestroy(): void {
+    this?.disconnect();
   }
 
   /**

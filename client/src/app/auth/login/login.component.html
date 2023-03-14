@@ -23,7 +23,10 @@
     </nz-form-item>
     <nz-alert *ngIf="errorMessage$ | async as message" nzType="error" [nzMessage]="message" nzShowIcon></nz-alert>
     <div class="actions">
-      <button nz-button nzType="primary" nzBlock [disabled]="formLogin.invalid">Войти</button>
+      <button nz-button nzType="primary" nzBlock [disabled]="formLogin.invalid">
+        <i nz-icon nzType="login" nzTheme="outline"></i>
+        <span>Войти</span>
+      </button>
     </div>
   </form>
 </nz-spin>

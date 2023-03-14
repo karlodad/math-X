@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { SocketService } from '../services/socket.service';
 
 @Component({
   selector: 'app-main',
@@ -53,9 +54,10 @@ import { AuthService } from '../services/auth.service';
       }
     `,
   ],
+  providers: [SocketService],
 })
 export default class MainComponent implements OnInit {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly socket: SocketService) {}
 
   ngOnInit(): void {
     // TODO: load user info
