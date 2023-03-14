@@ -63,7 +63,7 @@ export class QuestionsService {
 
       question.a = this.getRndInteger(min, max);
       question.b = this.getRndInteger(min, max);
-      let corrAns;
+      let corrAns: string;
       switch (symbol) {
         case 0: //plus
           question.symbol = '+';
@@ -98,7 +98,7 @@ export class QuestionsService {
 
   chance(chance: number, question: Question, operator: string) {
     if (chance < 0.5) {
-      let ans;
+      let ans: string;
       if (operator === '+') ans = (+question.a + +question.b).toString();
       if (operator === '-') ans = (+question.a - +question.b).toString();
       if (operator === '*') ans = (+question.a * +question.b).toString();

@@ -24,11 +24,11 @@ model Score {
   userId   String @db.Uuid
   points   Int? @default(0)
   combo    Int? @default(0)
-  game     Game @relation(fields: [gameId], references: [id])
+  game     GameType @relation(fields: [gameId], references: [id])
   gameId   Int
 }
 
-model Game {
+model GameType {
   id       Int      @id @default(autoincrement())
   name     String
   score    Score[]
