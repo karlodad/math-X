@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { AuthService } from 'src/app/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -8,13 +8,19 @@ import { AuthService } from 'src/app/services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class MenuComponent implements OnInit {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly router: Router) {}
 
-  ngOnInit(): void {}
-  refreshToken() {
-    this.authService.refreshToken();
+  async ngOnInit() {}
+
+  singleGame(type = 'infinity') {
+    this.router.navigate(['main', 'single'], { queryParams: { type } });
   }
-  logout() {
-    this.authService.logout();
+
+  records(type = 'infinity') {
+    this.router.navigate(['main', 'records'], { queryParams: { type } });
+  }
+
+  multiGame() {
+    this.router.navigate(['main', 'multi']);
   }
 }

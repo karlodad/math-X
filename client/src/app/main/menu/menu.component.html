@@ -1,2 +1,29 @@
-<button nz-button (click)="refreshToken()">Обновить токен</button>
-<button nz-button (click)="logout()">Выйти</button>
+<h2>Меню</h2>
+<div class="buttons">
+  <nz-button-group class="button">
+    <button nz-button nzType="primary" disabled>
+      <i nz-icon nzType="youtube" nzTheme="outline"></i>
+      <span>Игра на время</span>
+    </button>
+    <button nz-button nzType="default" disabled>
+      <i nz-icon nzType="trophy" nzTheme="outline"></i>
+      <span>Результаты</span>
+    </button>
+  </nz-button-group>
+  <nz-button-group class="button">
+    <button nz-button nzType="default" (click)="singleGame()">
+      <i nz-icon nzType="youtube" nzTheme="outline"></i>
+      <span>Игра без времени</span>
+    </button>
+    <button nz-button nzType="default"  (click)="records()">
+      <i nz-icon nzType="trophy" nzTheme="outline"></i>
+      <span>Результаты</span>
+    </button>
+  </nz-button-group>
+  <div class="button">
+    <button nzType="default" nz-button disabled>
+      <span nz-icon nzType="wifi" nzTheme="outline"></span>
+      <span>Игра по сети</span>
+    </button>
+  </div>
+</div>
