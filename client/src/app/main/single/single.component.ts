@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-single',
@@ -8,10 +9,22 @@ import { ActivatedRoute } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SingleComponent implements OnInit {
+  type: string = '';
+  isGame$ = new BehaviorSubject<boolean>(false);
+  isNewGame$ = new BehaviorSubject<boolean>(false);
+
   constructor(private readonly activatedRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
-    const type: string = this.activatedRoute.snapshot.queryParams['type'];
-    console.log(type);
+    this.type = this.activatedRoute.snapshot.queryParams['type'];
+  }
+
+  start(event: boolean) {
+    this.isNewGame$.next(event);
+    this.isGame$.next(true);
+  }
+
+  end() {
+    this.isGame$.next(false);
   }
 }

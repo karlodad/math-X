@@ -1,0 +1,12 @@
+.container {
+  padding-top: 32px;
+  .title,
+  .actions {
+    text-align: center;
+  }
+  .action-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}

@@ -1,1 +1,39 @@
-<p>play-result works!</p>
+<ng-container *ngIf="{ score: prevScore$ | async, loading: isLoading$ | async } as data">
+  <nz-spin nzTip="Загрузка предыдущего результата" [nzSpinning]="data.loading">
+    <div class="container">
+      <div class="action-back">
+        <button nz-button (click)="backToMenu()" nzType="dashed" title="Назад в меню">
+          <i nz-icon nzType="arrow-left" nzTheme="outline"></i>
+        </button>
+      </div>
+      <div class="title">
+        <h2>{{ title }}</h2>
+        <h3 *ngIf="data.score">Ваш прошлый результат: {{ data.score }}</h3>
+      </div>
+      <div class="actions">
+        <ng-container *ngIf="!data.score; else continueTpl">
+          <div class="actions-item">
+            <button nz-button (click)="start.emit(true)" nzType="primary">
+              <i nz-icon nzType="youtube" nzTheme="outline"></i>
+              <span>Играть</span>
+            </button>
+          </div>
+        </ng-container>
+        <ng-template #continueTpl>
+          <div class="actions-item">
+            <button nz-button (click)="start.emit(true)" nzType="primary">
+              <i nz-icon nzType="youtube" nzTheme="outline"></i>
+              <span>Заного</span>
+            </button>
+          </div>
+          <div class="actions-item" *nfIf="isContinedGame">
+            <button nz-button (click)="start.emit(false)" nzType="primary">
+              <i nz-icon nzType="youtube" nzTheme="outline"></i>
+              <span>Продолжить</span>
+            </button>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </nz-spin>
+</ng-container>

@@ -1,1 +1,6 @@
-<play-result></play-result>
+<ng-container *ngIf="{ isGame: isGame$ | async, isNewGame: isNewGame$ | async } as data">
+  <ng-container *ngIf="data.isGame; else waitingTpl"> </ng-container>
+  <ng-template #waitingTpl>
+    <play-result [type]="type" (start)="start($event)"></play-result>
+  </ng-template>
+</ng-container>
